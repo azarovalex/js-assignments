@@ -16,6 +16,6 @@
     "url": "https://github.com/rolling-scopes-school/js-assignments.git"
   },
   "dependencies": {
-    "npm": "^5.7.1"
+    "npm": "^5.8.0"
   }
 }
