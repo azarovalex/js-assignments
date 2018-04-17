@@ -130,7 +130,8 @@ function isTriangle(a,b,c) {
  
 function doRectanglesOverlap(rect1, rect2) {
     if (rect1.top > rect2.top)
-        [rect1,rect2] = [rect2,rect1];
+        // [rect1,rect2] = [rect2,rect1];
+        rect2 = [rect1, rect1 = rect2][0];
     return rect1.top + rect1.height > rect2.top && rect1.left + rect1.width > rect2.left;
 }
 
