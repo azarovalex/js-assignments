@@ -28,7 +28,42 @@
  *   'NULL'      => false 
  */
 function findStringInSnakingPuzzle(puzzle, searchStr) {
-    throw new Error('Not implemented');
+    let IsInPosArr = (posArr, pos) => {
+		for (let arrPos of posArr)
+			if ((arrPos[0] == pos[0]) && (arrPos[1] == pos[1])) return true;
+		return false;
+	}
+
+	let IsHere = (puzzle, word, curLetterNum, curPos) => {
+		if (curLetterNum == word.length - 1) {
+			if ((puzzle[curPos[0]][curPos[1]] == word[curLetterNum]) && (!IsInPosArr(wasInRow, [curPos[0], curPos[1]]))) {
+				return true;
+			} else return false;
+		} else {
+			if ((puzzle[curPos[0]][curPos[1]] == word[curLetterNum]) && (!IsInPosArr(wasInRow, [curPos[0], curPos[1]]))) {
+				let result = false;
+				wasInRow.push([curPos[0], curPos[1]]);
+				if (curPos[0] > 0)
+					result = result || IsHere(puzzle, word, curLetterNum + 1, [curPos[0] - 1, curPos[1]]);
+				if (curPos[1] < puzzle[curPos[0]].length - 1)
+					result = result || IsHere(puzzle, word, curLetterNum + 1, [curPos[0], curPos[1] + 1]);
+				if (curPos[0] < puzzle.length - 1)
+					result = result || IsHere(puzzle, word, curLetterNum + 1, [curPos[0] + 1, curPos[1]]);
+				if (curPos[1] > 0)
+					result = result || IsHere(puzzle, word, curLetterNum + 1, [curPos[0], curPos[1] - 1]);
+				wasInRow.pop();
+				return result;
+			} else return false;
+		}
+	}
+	
+	let result = false;
+	let wasInRow = new Array();
+	for (let i = 0; i < puzzle.length; i++)
+		for (let j = 0; j < puzzle[i].length; j++)
+            result = result || IsHere(puzzle, searchStr, 0, [i, j]);
+            
+	return result;
 }
 
 
@@ -45,7 +80,25 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
  *    'abc' => 'abc','acb','bac','bca','cab','cba'
  */
 function* getPermutations(chars) {
-    throw new Error('Not implemented');
+    function permute(chars) {
+        if (chars.length == 1) {
+            return chars;
+        } else if (chars.length == 2) {
+            return [chars, chars[1] + chars[0]];
+        } else {
+            const permutations = [];
+            chars.split('').forEach((char, index, array) => {
+                let sub = [].concat(array);
+                sub.splice(index, 1);
+                permute(sub.join('')).forEach((permutation) => permutations.push(char + permutation));
+            });
+            return permutations;
+        }
+    }
+
+    for (let permutation of permute(chars)) {
+        yield permutation;
+    }
 }
 
 
@@ -65,7 +118,9 @@ function* getPermutations(chars) {
  *    [ 1, 6, 5, 10, 8, 7 ] => 18  (купить по 1,6,5 и затем продать все по 10)
  */
 function getMostProfitFromStockQuotes(quotes) {
-    throw new Error('Not implemented');
+    let sum = 0;
+	quotes.forEach((value, index) => sum += quotes.slice(index).sort((a, b) => b - a)[0] - value);
+	return sum;
 }
 
 
@@ -84,22 +139,28 @@ function getMostProfitFromStockQuotes(quotes) {
  * 
  */
 function UrlShortener() {
-    this.urlAllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"+
-                           "abcdefghijklmnopqrstuvwxyz"+
-                           "0123456789-_.~!*'();:@&=+$,/?#[]";
+    this.urlAllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~!*'();:@&=+$,/?#[]";
 }
 
 UrlShortener.prototype = {
-
     encode: function(url) {
-        throw new Error('Not implemented');
+        let s = url.split('')
+            .reduce((pv, cv) => pv + (this.urlAllowedChars.indexOf(cv) < 10 ? '0' : '') + this.urlAllowedChars.indexOf(cv), '');
+        let answer = '';
+        if (s.length % 4 !== 0) s += '99';
+        while (s.length > 0) {
+            answer += String.fromCharCode(s.slice(0, 4));
+            s = s.slice(4);
+        }
+        return answer;
     },
-    
-    decode: function(code) {
-        throw new Error('Not implemented');
-    } 
-}
 
+    decode: function(code) {
+        let answer = '';
+        return code.split('')
+            .reduce((pv, cv) => pv += this.urlAllowedChars[Math.floor(cv.charCodeAt(0) / 100)] + (cv.charCodeAt(0) % 100 !== 99 ? this.urlAllowedChars[cv.charCodeAt(0) % 100] : ''), '');
+    }
+}
 
 module.exports = {
     findStringInSnakingPuzzle: findStringInSnakingPuzzle,
